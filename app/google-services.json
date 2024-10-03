@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "374624065987",
+    "project_id": "pi4es2024time4",
+    "storage_bucket": "pi4es2024time4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374624065987:android:6eb0d23112315b050cc576",
+        "android_client_info": {
+          "package_name": "br.edu.puccampinas.pi4es2024time4"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnF8m96-fa2c6M1--dBpNhMWLeu45tD1I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
