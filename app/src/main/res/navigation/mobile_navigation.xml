@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="br.edu.puccampinas.pi4es2024time4.ui.home.HomeFragment"
+        android:name="br.edu.puccampinas.pi4es2024time4.fragments.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="br.edu.puccampinas.pi4es2024time4.ui.gallery.GalleryFragment"
+        android:name="br.edu.puccampinas.pi4es2024time4.fragments.GalleryFragment"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="br.edu.puccampinas.pi4es2024time4.ui.slideshow.SlideshowFragment"
+        android:name="br.edu.puccampinas.pi4es2024time4.fragments.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
 </navigation>

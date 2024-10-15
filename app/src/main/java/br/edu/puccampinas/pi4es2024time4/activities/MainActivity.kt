@@ -1,4 +1,4 @@
-package br.edu.puccampinas.pi4es2024time4
+package br.edu.puccampinas.pi4es2024time4.activities
 
 import android.os.Bundle
 import android.view.Menu
@@ -11,7 +11,9 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import br.edu.puccampinas.pi4es2024time4.R
 import br.edu.puccampinas.pi4es2024time4.databinding.ActivityMainBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
 
