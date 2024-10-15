@@ -36,6 +36,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="Circulo">
+        <item name="cornerSize">50%</item>
+    </style>
+
     <style name="Theme.Pi4Es2024Time4.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Pi4Es2024Time4.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
