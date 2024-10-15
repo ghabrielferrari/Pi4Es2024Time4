@@ -29,7 +29,7 @@ class SignInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         inicializarEventosClique()
-        firebaseAuth.signOut()
+        //firebaseAuth.signOut()
     }
 
     override fun onStart() {

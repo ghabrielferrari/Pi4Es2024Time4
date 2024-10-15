@@ -6,6 +6,12 @@
     app:startDestination="@+id/nav_home">
 
     <fragment
+        android:id="@+id/nav_profile_settings"
+        android:name="br.edu.puccampinas.pi4es2024time4.fragments.ProfileSettingsFragment"
+        android:label="@string/menu_profile_settings"
+        tools:layout="@layout/fragment_profile_settings" />
+
+    <fragment
         android:id="@+id/nav_home"
         android:name="br.edu.puccampinas.pi4es2024time4.fragments.HomeFragment"
         android:label="@string/menu_home"
