@@ -43,6 +43,12 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun inicializarEventosClique() {
+        binding.textSignIn.setOnClickListener {
+            startActivity(
+                Intent(this, SignInActivity::class.java)
+            )
+        }
+
         binding.signUpButton.setOnClickListener {
             if (validarCampos()) {
                 cadastrarUsuario(nome, email, senha)

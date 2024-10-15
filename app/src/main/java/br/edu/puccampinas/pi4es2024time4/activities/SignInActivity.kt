@@ -29,7 +29,7 @@ class SignInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         inicializarEventosClique()
-        //firebaseAuth.signOut()
+        firebaseAuth.signOut()
     }
 
     override fun onStart() {
@@ -48,7 +48,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun inicializarEventosClique() {
-        binding.textView.setOnClickListener {
+        binding.textSignUp.setOnClickListener {
             startActivity(
                 Intent(this, SignUpActivity::class.java)
             )
