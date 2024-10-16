@@ -2,10 +2,9 @@ package br.edu.puccampinas.pi4es2024time4.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import br.edu.puccampinas.pi4es2024time4.databinding.ActivitySignInBinding
-import br.edu.puccampinas.pi4es2024time4.utils.exibirMensagem
+import br.edu.puccampinas.pi4es2024time4.utils.showMessage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -67,7 +66,7 @@ class SignInActivity : AppCompatActivity() {
         firebaseAuth.signInWithEmailAndPassword(
             email, senha
         ).addOnSuccessListener {
-            exibirMensagem("Logado com sucesso!")
+            showMessage("Logado com sucesso!")
             startActivity(
                 Intent(this, MainActivity::class.java)
             )
@@ -77,10 +76,10 @@ class SignInActivity : AppCompatActivity() {
                 throw erro
             } catch (erroUsuarioInvalido: FirebaseAuthInvalidUserException) {
                 erroUsuarioInvalido.printStackTrace()
-                exibirMensagem("E-mail não cadastrado")
+                showMessage("E-mail não cadastrado")
             } catch (erroCredenciaisInvalidas: FirebaseAuthInvalidCredentialsException) {
                 erroCredenciaisInvalidas.printStackTrace()
-                exibirMensagem("E-mail ou senha estão incorretos")
+                showMessage("E-mail ou senha estão incorretos")
             }
 
         }

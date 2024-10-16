@@ -45,8 +45,12 @@ dependencies {
     //Firebase
     implementation(platform(libs.firebase.bom))
     implementation(platform(libs.firebase.auth))
+    implementation(libs.firebase.storage.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.analytics)
+
+    //Picasso
+    implementation(libs.picasso)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

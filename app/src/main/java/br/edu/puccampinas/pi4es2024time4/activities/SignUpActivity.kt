@@ -2,15 +2,10 @@ package br.edu.puccampinas.pi4es2024time4.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import br.edu.puccampinas.pi4es2024time4.R
 import br.edu.puccampinas.pi4es2024time4.databinding.ActivitySignUpBinding
 import br.edu.puccampinas.pi4es2024time4.model.User
-import br.edu.puccampinas.pi4es2024time4.utils.exibirMensagem
+import br.edu.puccampinas.pi4es2024time4.utils.showMessage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -75,13 +70,13 @@ class SignUpActivity : AppCompatActivity() {
                 throw erro
             }catch ( erroSenhaFraca: FirebaseAuthWeakPasswordException){
                 erroSenhaFraca.printStackTrace()
-                exibirMensagem("Senha fraca, digite outra com letras, número e caracteres especiais")
+                showMessage("Senha fraca, digite outra com letras, número e caracteres especiais")
             }catch ( erroUsuarioExistente: FirebaseAuthUserCollisionException){
                 erroUsuarioExistente.printStackTrace()
-                exibirMensagem("E-mail já percente a outro usuário")
+                showMessage("E-mail já percente a outro usuário")
             }catch ( erroCredenciaisInvalidas: FirebaseAuthInvalidCredentialsException){
                 erroCredenciaisInvalidas.printStackTrace()
-                exibirMensagem("E-mail inválido, digite um outro e-mail")
+                showMessage("E-mail inválido, digite um outro e-mail")
             }
         }
     }
@@ -92,12 +87,12 @@ class SignUpActivity : AppCompatActivity() {
             .document( usuario.id )
             .set( usuario )
             .addOnSuccessListener {
-                exibirMensagem("Sucesso ao fazer seu cadastro")
+                showMessage("Sucesso ao fazer seu cadastro")
                 startActivity(
                     Intent(applicationContext, MainActivity::class.java)
                 )
             }.addOnFailureListener {
-                exibirMensagem("Erro ao fazer seu cadastro")
+                showMessage("Erro ao fazer seu cadastro")
             }
     }
 

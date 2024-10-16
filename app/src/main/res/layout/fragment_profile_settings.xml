@@ -7,7 +7,7 @@
     tools:context=".fragments.ProfileSettingsFragment">
 
     <TextView
-        android:id="@+id/text_profile_settings"
+        android:id="@+id/textSettingsProfile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -20,13 +20,13 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/imagePerfil"
+        android:id="@+id/imageProfile"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_marginTop="32dp"
         android:padding="0dp"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@id/textInputLayout"
+        app:layout_constraintBottom_toTopOf="@id/textInputProfileName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,17 +35,20 @@
         app:srcCompat="@drawable/perfil" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabSelecionar"
+        android:id="@+id/fabImageProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:clickable="true"
         app:backgroundTint="@color/orange"
-        app:layout_constraintBottom_toBottomOf="@+id/imagePerfil"
-        app:layout_constraintEnd_toEndOf="@+id/imagePerfil" />
+        app:layout_constraintBottom_toBottomOf="@+id/imageProfile"
+        app:layout_constraintEnd_toEndOf="@+id/imageProfile"
+        app:srcCompat="@drawable/ic_galeria_24"
+        />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
+        android:id="@+id/textInputProfileName"
+        style="@style/LoginTextInputOuterFieldStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -54,10 +57,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imagePerfil">
+        app:layout_constraintTop_toBottomOf="@+id/imageProfile">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editNomePerfil"
+            android:id="@+id/editProfileName"
+            style="@style/LoginTextInputInnerFieldStyle"
             android:inputType="textPersonName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,7 +69,8 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout2"
+        android:id="@+id/textInputProfileAddress"
+        style="@style/LoginTextInputOuterFieldStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -74,10 +79,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+        app:layout_constraintTop_toBottomOf="@+id/textInputProfileName">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editEnderecoPerfil"
+            android:id="@+id/editProfileAddress"
+            style="@style/LoginTextInputInnerFieldStyle"
             android:inputType="textPostalAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -85,16 +91,18 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/btnAtualizarPerfil"
+        android:id="@+id/btnUpdateProfile"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="92dp"
         android:layout_marginEnd="16dp"
         android:text="Atualizar"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/orange"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputProfileName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
