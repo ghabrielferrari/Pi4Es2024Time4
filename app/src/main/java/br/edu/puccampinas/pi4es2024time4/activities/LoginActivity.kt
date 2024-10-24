@@ -1,84 +1,84 @@
 package br.edu.puccampinas.pi4es2024time4.activities
 
 import android.content.Intent
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import br.edu.puccampinas.pi4es2024time4.databinding.ActivitySignInBinding
+import android.os.Bundle
+import br.edu.puccampinas.pi4es2024time4.databinding.ActivityLoginBinding
 import br.edu.puccampinas.pi4es2024time4.utils.showMessage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 
-class SignInActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
-    //Binding
     private val binding by lazy {
-        ActivitySignInBinding.inflate(layoutInflater)
+        ActivityLoginBinding.inflate(layoutInflater)
     }
+
+    private lateinit var email: String
+    private lateinit var password: String
 
     //Firebase
     private val firebaseAuth by lazy {
         FirebaseAuth.getInstance()
     }
 
-    private lateinit var email: String
-    private lateinit var senha: String
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        inicializarEventosClique()
+        initializeClickEvents()
         //firebaseAuth.signOut()
+
     }
 
     override fun onStart() {
         super.onStart()
-        verificarUsuarioLogado()
+        checkLoggedInUser()
     }
 
-    private fun verificarUsuarioLogado() {
+    private fun checkLoggedInUser() {
 
-        val usuarioAtual = firebaseAuth.currentUser
-        if(usuarioAtual != null){
+        val currentUser = firebaseAuth.currentUser
+        if(currentUser != null){
             startActivity(
                 Intent(this, MainActivity::class.java)
             )
         }
     }
 
-    private fun inicializarEventosClique() {
-        binding.textSignUp.setOnClickListener {
+    private fun initializeClickEvents() {
+        binding.textRegister.setOnClickListener {
             startActivity(
-                Intent(this, SignUpActivity::class.java)
+                Intent(this, RegisterActivity::class.java)
             )
         }
 
-        binding.signInButton.setOnClickListener {
-            if (validarCampos()) {
-                logarUsuario()
+        binding.btnLogin.setOnClickListener {
+            if (validateFields()) {
+                loginUser()
             }
         }
 
     }
 
-    private fun logarUsuario() {
+    private fun loginUser() {
 
         firebaseAuth.signInWithEmailAndPassword(
-            email, senha
+            email, password
         ).addOnSuccessListener {
             showMessage("Logado com sucesso!")
             startActivity(
                 Intent(this, MainActivity::class.java)
             )
-        }.addOnFailureListener { erro ->
+        }.addOnFailureListener { error ->
 
             try {
-                throw erro
-            } catch (erroUsuarioInvalido: FirebaseAuthInvalidUserException) {
-                erroUsuarioInvalido.printStackTrace()
+                throw error
+            } catch (invalidUserError: FirebaseAuthInvalidUserException) {
+                invalidUserError.printStackTrace()
                 showMessage("E-mail não cadastrado")
-            } catch (erroCredenciaisInvalidas: FirebaseAuthInvalidCredentialsException) {
-                erroCredenciaisInvalidas.printStackTrace()
+            } catch (invalidCredentialsError: FirebaseAuthInvalidCredentialsException) {
+                invalidCredentialsError.printStackTrace()
                 showMessage("E-mail ou senha estão incorretos")
             }
 
@@ -86,24 +86,23 @@ class SignInActivity : AppCompatActivity() {
 
     }
 
-    private fun validarCampos(): Boolean {
+    private fun validateFields(): Boolean {
         email = binding.editLoginEmail.text.toString()
-        senha = binding.editLoginPassword.text.toString()
+        password = binding.editLoginPassword.text.toString()
 
         if (email.isNotEmpty()) {
-            binding.textInputLoginEmail.error = null
 
-            if (senha.isNotEmpty()) {
-                binding.textInputLoginPassword.error = null
+            binding.textInputLayoutLoginEmail.error = null
+            if (password.isNotEmpty()) {
+                binding.textInputLayoutLoginPassword.error = null
                 return true
-
             } else {
-                binding.textInputLoginPassword.error = "Preencha a senha"
+                binding.textInputLayoutLoginPassword.error = "Preencha o e-mail"
                 return false
             }
 
         } else {
-            binding.textInputLoginEmail.error = "Preencha o e-mail"
+            binding.textInputLayoutLoginEmail.error = "Preencha o e-mail"
             return false
         }
     }

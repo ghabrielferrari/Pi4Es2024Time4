@@ -1,13 +1,12 @@
 package br.edu.puccampinas.pi4es2024time4.utils
 
 import android.app.Activity
-import android.content.Context
 import android.widget.Toast
 
-fun Context.showMessage(message: String){
+fun Activity.showMessage(mensagem: String) {
     Toast.makeText(
-    this,
-        message,
+        this,
+        mensagem,
         Toast.LENGTH_LONG
     ).show()
 }
