@@ -48,6 +48,8 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.analytics)
 
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

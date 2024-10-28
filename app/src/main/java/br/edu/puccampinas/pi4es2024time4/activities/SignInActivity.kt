@@ -2,7 +2,6 @@ package br.edu.puccampinas.pi4es2024time4.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import br.edu.puccampinas.pi4es2024time4.databinding.ActivitySignInBinding
 import br.edu.puccampinas.pi4es2024time4.utils.exibirMensagem
