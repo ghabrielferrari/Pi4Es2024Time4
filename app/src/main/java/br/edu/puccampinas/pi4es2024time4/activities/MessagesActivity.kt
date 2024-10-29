@@ -1,9 +1,17 @@
 package br.edu.puccampinas.pi4es2024time4.activities
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.edu.puccampinas.pi4es2024time4.R
 import br.edu.puccampinas.pi4es2024time4.adapters.MessagesAdapter
@@ -18,6 +26,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
+import java.io.File
+import java.io.IOException
 
 class MessagesActivity : AppCompatActivity() {
 
@@ -35,6 +45,10 @@ class MessagesActivity : AppCompatActivity() {
     private var dadosDestinatario: User? = null
     private var dadosUsuarioRementente: User? = null
     private lateinit var conversasAdapter: MessagesAdapter
+
+    private var mediaRecorder: MediaRecorder? = null
+    private var isRecording = false
+    private var audioFile: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +73,7 @@ class MessagesActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         listenerRegistration.remove()
+        stopRecording()
     }
 
     private fun inicializarListeners() {
@@ -108,60 +123,142 @@ class MessagesActivity : AppCompatActivity() {
             salvarMensagem( mensagem )
         }
 
+        binding.ibMic.setOnClickListener {
+            if (isRecording) {
+                stopRecording()
+            } else {
+                startRecording()
+            }
+        }
+
+        binding.ibCamera.setOnClickListener {
+            openCamera()
+        }
+
     }
 
-    private fun salvarMensagem( textoMensagem: String ) {
-        if( textoMensagem.isNotEmpty() ){
+    private fun startRecording() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_AUDIO_PERMISSION)
+            return
+        }
+        audioFile = File.createTempFile("audio_", ".3gp", cacheDir)  // Arquivo temporário para gravação
+        mediaRecorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            setOutputFile(audioFile!!.absolutePath)
 
+            try {
+                prepare()
+                start()
+                isRecording = true
+                binding.ibMic.setImageResource(R.drawable.ic_mic_24) // Altere para o ícone de parar
+            } catch (e: IOException) {
+                showMessage("Erro ao iniciar gravação")
+                Log.e("AudioRecord", "prepare() failed")
+            }
+        }
+    }
+
+    private fun stopRecording() {
+        if (isRecording) {
+            mediaRecorder?.apply {
+                stop()
+                release()
+                isRecording = false
+                binding.ibMic.setImageResource(R.drawable.ic_mic_24) // Altere para o ícone de microfone
+                enviarMensagemAudio()
+            }
+        }
+    }
+
+    private fun enviarMensagemAudio() {
+        val idUsuarioRemetente = firebaseAuth.currentUser?.uid
+        val idUsuarioDestinatario = dadosDestinatario?.id
+        if (idUsuarioRemetente != null && idUsuarioDestinatario != null && audioFile != null) {
+            val mensagemAudio = Message(
+                userId = idUsuarioRemetente,
+                message = audioFile!!.absolutePath // ou o URI do arquivo
+            )
+            salvarMensagemFirestore(idUsuarioRemetente, idUsuarioDestinatario, mensagemAudio)
+            salvarMensagemFirestore(idUsuarioDestinatario, idUsuarioRemetente, mensagemAudio)
+        }
+    }
+
+    private fun openCamera() {
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraLauncher.launch(cameraIntent)
+    }
+
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val imageUri: Uri? = result.data?.data
+            enviarMensagemFoto(imageUri)
+        }
+    }
+
+    private fun enviarMensagemFoto(imageUri: Uri?) {
+        val idUsuarioRemetente = firebaseAuth.currentUser?.uid
+        val idUsuarioDestinatario = dadosDestinatario?.id
+        if (idUsuarioRemetente != null && idUsuarioDestinatario != null && imageUri != null) {
+            val mensagemFoto = Message(
+                userId = idUsuarioRemetente,
+                message = imageUri.toString() // ou outra representação da imagem
+            )
+            salvarMensagemFirestore(idUsuarioRemetente, idUsuarioDestinatario, mensagemFoto)
+            salvarMensagemFirestore(idUsuarioDestinatario, idUsuarioRemetente, mensagemFoto)
+        }
+    }
+
+    private fun salvarMensagem(textoMensagem: String) {
+        if (textoMensagem.isNotEmpty()) {
             val idUsuarioRemetente = firebaseAuth.currentUser?.uid
             val idUsuarioDestinatario = dadosDestinatario?.id
-            if( idUsuarioRemetente != null && idUsuarioDestinatario != null ){
+            if (idUsuarioRemetente != null && idUsuarioDestinatario != null) {
                 val mensagem = Message(
                     idUsuarioRemetente, textoMensagem
                 )
 
-                //Salvar para o Remetente
+                // Salvar para o Remetente
                 salvarMensagemFirestore(
                     idUsuarioRemetente, idUsuarioDestinatario, mensagem
                 )
-                //Jamilton -> Foto e nome Destinatario (ana)
+                // Jamilton -> Foto e nome Destinatario (ana)
                 val conversaRemetente = Conversation(
                     idUsuarioRemetente, idUsuarioDestinatario,
                     dadosDestinatario!!.picture, dadosDestinatario!!.name,
                     textoMensagem
                 )
-                salvarConversaFirestore( conversaRemetente )
+                salvarConversaFirestore(conversaRemetente)
 
-                //Salvar mesma mensagem para o destinatario
+                // Salvar mesma mensagem para o destinatario
                 salvarMensagemFirestore(
                     idUsuarioDestinatario, idUsuarioRemetente, mensagem
                 )
-                //Ana -> Foto e nome Remente (jamilton)
+                // Ana -> Foto e nome Remente (jamilton)
                 val conversaDestinatario = Conversation(
                     idUsuarioDestinatario, idUsuarioRemetente,
                     dadosUsuarioRementente!!.picture, dadosUsuarioRementente!!.name,
                     textoMensagem
                 )
-                salvarConversaFirestore( conversaDestinatario )
+                salvarConversaFirestore(conversaDestinatario)
 
                 binding.editMessage.setText("")
-
             }
-
         }
     }
 
     private fun salvarConversaFirestore(conversa: Conversation) {
         firestore
             .collection(Constants.CONVERSATIONS)
-            .document( conversa.senderUserId )
+            .document(conversa.senderUserId)
             .collection(Constants.LAST_MESSAGES)
-            .document( conversa.recipientUserId )
-            .set( conversa )
+            .document(conversa.recipientUserId)
+            .set(conversa)
             .addOnFailureListener {
                 showMessage("Erro ao salvar conversa")
             }
-
     }
 
     private fun salvarMensagemFirestore(
@@ -169,16 +266,14 @@ class MessagesActivity : AppCompatActivity() {
         idUsuarioDestinatario: String,
         mensagem: Message
     ) {
-
         firestore
             .collection(Constants.MESSAGES)
-            .document( idUsuarioRemetente )
-            .collection( idUsuarioDestinatario )
-            .add( mensagem )
+            .document(idUsuarioRemetente)
+            .collection(idUsuarioDestinatario)
+            .add(mensagem)
             .addOnFailureListener {
                 showMessage("Erro ao enviar mensagem")
             }
-
     }
 
     private fun inicializarToolbar() {
@@ -242,4 +337,9 @@ class MessagesActivity : AppCompatActivity() {
         }
 
     }
+
+    companion object {
+        private const val REQUEST_AUDIO_PERMISSION = 200
+    }
+
 }
