@@ -14,6 +14,7 @@ class ContactsAdapter(
 ) : Adapter<ContactsAdapter.ContactsViewHolder>() {
 
     private var contactsList = emptyList<User>()
+
     fun addToList(list: List<User>) {
         contactsList = list
         notifyDataSetChanged()
@@ -24,7 +25,6 @@ class ContactsAdapter(
     ) : ViewHolder(binding.root) {
 
         fun bind(user: User) {
-
             binding.textContactName.text = user.name
 
             // Verifique se a URL da imagem não está vazia
@@ -37,23 +37,17 @@ class ContactsAdapter(
                 binding.imageContactPicture.setImageResource(R.drawable.profile)
             }
 
-            //Evento de clique
+            // Evento de clique
             binding.clItemContato.setOnClickListener {
                 onClick(user)
             }
-
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
-
         val inflater = LayoutInflater.from(parent.context)
-        val itemView = ItemContactsBinding.inflate(
-            inflater, parent, false
-        )
+        val itemView = ItemContactsBinding.inflate(inflater, parent, false)
         return ContactsViewHolder(itemView)
-
     }
 
     override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
@@ -64,5 +58,4 @@ class ContactsAdapter(
     override fun getItemCount(): Int {
         return contactsList.size
     }
-
 }

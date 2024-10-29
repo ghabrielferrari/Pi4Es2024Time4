@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import br.edu.puccampinas.pi4es2024time4.fragments.ContactsFragment
-import br.edu.puccampinas.pi4es2024time4.fragments.ConversationsFragment
+import com.jamiltondamasceno.aulawhatsapp.fragments.ConversationsFragment
 
 class ViewPagerAdapter(
     private val tabs: List<String>,

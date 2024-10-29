@@ -2,6 +2,7 @@ package br.edu.puccampinas.pi4es2024time4.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,38 +23,26 @@ class ContactsFragment : Fragment() {
     private lateinit var binding: FragmentContactsBinding
     private lateinit var snapshotEvent: ListenerRegistration
     private lateinit var adapterContacts: ContactsAdapter
-    private val firebaseAuth by lazy {
-        FirebaseAuth.getInstance()
-    }
-    private val firestore by lazy {
-        FirebaseFirestore.getInstance()
-    }
+    private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private val firestore by lazy { FirebaseFirestore.getInstance() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        binding = FragmentContactsBinding.inflate(
-            inflater, container, false
-        )
+        binding = FragmentContactsBinding.inflate(inflater, container, false)
 
         adapterContacts = ContactsAdapter { user ->
             val intent = Intent(context, MessagesActivity::class.java)
             intent.putExtra("dadosDestinatario", user)
-            //intent.putExtra("origem", Constants.ORIGEM_CONTATO)
-            startActivity( intent )
+            startActivity(intent)
         }
+
         binding.rvContacts.adapter = adapterContacts
         binding.rvContacts.layoutManager = LinearLayoutManager(context)
-        binding.rvContacts.addItemDecoration(
-            DividerItemDecoration(
-                context, LinearLayoutManager.VERTICAL
-            )
-        )
+        binding.rvContacts.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
         return binding.root
-
     }
 
     override fun onStart() {
@@ -62,39 +51,37 @@ class ContactsFragment : Fragment() {
     }
 
     private fun addContactsListener() {
-
-        snapshotEvent = firestore
-            .collection( Constants.USERS )
+        snapshotEvent = firestore.collection(Constants.USERS)
             .addSnapshotListener { querySnapshot, error ->
+                if (error != null) {
+                    Log.e("ContactsFragment", "Error fetching contacts: ${error.message}")
+                    return@addSnapshotListener
+                }
 
+                val loggedInUserId = firebaseAuth.currentUser?.uid
                 val contactsList = mutableListOf<User>()
-                val documents = querySnapshot?.documents
 
-                documents?.forEach { documentSnapshot ->
+                querySnapshot?.documents?.forEach { documentSnapshot ->
+                    val user = documentSnapshot.toObject(User::class.java)
 
-                    val loggedInUserId = firebaseAuth.currentUser?.uid
-                    val user = documentSnapshot.toObject( User::class.java )
-
-                    if( user != null && loggedInUserId != null ){
-                        if( loggedInUserId != user.id ){
-                            contactsList.add( user )
-                        }
+                    // Verifique se o usuário não é nulo e não é o próprio usuário logado
+                    if (user != null && loggedInUserId != null && loggedInUserId != user.id) {
+                        contactsList.add(user)
                     }
-
                 }
 
-                //Lista de contatos (atualizar o RecyclerView)
-                if ( contactsList.isNotEmpty() ){
-                    adapterContacts.addToList( contactsList )
+                // Atualize o RecyclerView com a nova lista filtrada
+                if (contactsList.isNotEmpty()) {
+                    adapterContacts.addToList(contactsList)
+                } else {
+                    Log.i("ContactsFragment", "No contacts found.")
+                    adapterContacts.addToList(emptyList()) // Limpa a lista se não houver contatos
                 }
-
             }
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
         snapshotEvent.remove()
     }
-
 }

@@ -1,4 +1,4 @@
-package br.edu.puccampinas.pi4es2024time4.fragments
+package com.jamiltondamasceno.aulawhatsapp.fragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.edu.puccampinas.pi4es2024time4.activities.MessagesActivity
-import br.edu.puccampinas.pi4es2024time4.adapters.ConversationsAdapter
 import br.edu.puccampinas.pi4es2024time4.databinding.FragmentConversationsBinding
 import br.edu.puccampinas.pi4es2024time4.model.Conversation
 import br.edu.puccampinas.pi4es2024time4.model.User
@@ -20,18 +19,19 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
+import com.jamiltondamasceno.aulawhatsapp.adapters.ConversationsAdapter
 
 class ConversationsFragment : Fragment() {
 
     private lateinit var binding: FragmentConversationsBinding
-    private lateinit var snapshotEvent: ListenerRegistration
+    private lateinit var eventoSnapshot: ListenerRegistration
     private val firebaseAuth by lazy {
         FirebaseAuth.getInstance()
     }
     private val firestore by lazy {
         FirebaseFirestore.getInstance()
     }
-    private lateinit var conversationsAdapter: ConversationsAdapter
+    private lateinit var conversasAdapter: ConversationsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,19 +42,19 @@ class ConversationsFragment : Fragment() {
             inflater, container, false
         )
 
-        conversationsAdapter = ConversationsAdapter { conversation ->
+        conversasAdapter = ConversationsAdapter { conversa ->
             val intent = Intent(context, MessagesActivity::class.java)
 
-            val user = User(
-                id = conversation.recipientUserId,
-                name = conversation.name,
-                picture = conversation.picture
+            val usuario = User(
+                id = conversa.recipientUserId,
+                name = conversa.name,
+                picture = conversa.picture
             )
-            intent.putExtra("dadosDestinatario", user)
-            //intent.putExtra("origem", Constants.ORIGEM_CONVERSA)
+            intent.putExtra("dadosDestinatario", usuario)
+            //intent.putExtra("origem", Constantes.ORIGEM_CONVERSA)
             startActivity( intent )
         }
-        binding.rvConversation.adapter = conversationsAdapter
+        binding.rvConversation.adapter = conversasAdapter
         binding.rvConversation.layoutManager = LinearLayoutManager(context)
         binding.rvConversation.addItemDecoration(
             DividerItemDecoration(
@@ -67,43 +67,43 @@ class ConversationsFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        addConversationsListener()
+        adicionarListenerConversas()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        snapshotEvent.remove()
+        eventoSnapshot.remove()
     }
 
-    private fun addConversationsListener() {
+    private fun adicionarListenerConversas() {
 
-        val senderUserId= firebaseAuth.currentUser?.uid
-        if( senderUserId != null ){
-            snapshotEvent = firestore
+        val idUsuarioRemetente = firebaseAuth.currentUser?.uid
+        if( idUsuarioRemetente != null ){
+            eventoSnapshot = firestore
                 .collection(Constants.CONVERSATIONS)
-                .document( senderUserId )
+                .document( idUsuarioRemetente )
                 .collection(Constants.LAST_MESSAGES)
                 .orderBy("data", Query.Direction.DESCENDING)
-                .addSnapshotListener { querySnapshot, error ->
+                .addSnapshotListener { querySnapshot, erro ->
 
-                    if( error != null ){
+                    if( erro != null ){
                         activity?.showMessage("Erro ao recuperar conversas")
                     }
 
-                    val conversationList = mutableListOf<Conversation>()
-                    val documents = querySnapshot?.documents
+                    val listaConversas = mutableListOf<Conversation>()
+                    val documentos = querySnapshot?.documents
 
-                    documents?.forEach { documentSnapshot ->
+                    documentos?.forEach { documentSnapshot ->
 
-                        val conversation = documentSnapshot.toObject(Conversation::class.java)
-                        if( conversation != null ){
-                            conversationList.add( conversation )
-                            Log.i("exibicao_conversas", "${conversation.name} - ${conversation.lastMessage}")
+                        val conversa = documentSnapshot.toObject(Conversation::class.java)
+                        if( conversa != null ){
+                            listaConversas.add( conversa )
+                            Log.i("exibicao_conversas", "${conversa.name} - ${conversa.lastMessage}")
                         }
                     }
 
-                    if( conversationList.isNotEmpty() ){
-                        conversationsAdapter.addToList( conversationList )
+                    if( listaConversas.isNotEmpty() ){
+                        conversasAdapter.adicionarLista( listaConversas )
                     }
 
                 }

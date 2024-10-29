@@ -12,50 +12,50 @@ import com.google.firebase.auth.FirebaseAuth
 
 class MessagesAdapter : Adapter<ViewHolder>() {
 
-    private var messagesList = emptyList<Message>()
-    fun addToList(list: List<Message>) {
-        messagesList = list
+    private var listaMensagens = emptyList<Message>()
+    fun adicionarLista( lista: List<Message> ){
+        listaMensagens = lista
         notifyDataSetChanged()
     }
 
-    class SenderMessagesViewHolder(
+    class MensagensRemetenteViewHolder(//ViewHolder
         private val binding: ItemMessagesSenderBinding
-    ) : ViewHolder(binding.root) {
+    ) : ViewHolder( binding.root ){
 
-        fun bind(message: Message){
-            binding.textMessageSender.text = message.message
+        fun bind( mensagem: Message ){
+            binding.textMessageSender.text = mensagem.message
         }
 
         companion object {
-            fun inflateLayout(parent: ViewGroup): SenderMessagesViewHolder {
+            fun inflarLayout( parent: ViewGroup ) : MensagensRemetenteViewHolder {
 
-                val inflater = LayoutInflater.from(parent.context)
+                val inflater = LayoutInflater.from( parent.context )
                 val itemView = ItemMessagesSenderBinding.inflate(
                     inflater, parent, false
                 )
-                return SenderMessagesViewHolder(itemView)
+                return MensagensRemetenteViewHolder( itemView )
 
             }
         }
 
     }
 
-    class RecipientMessagesViewHolder(
+    class MensagensDestinatarioViewHolder(//ViewHolder
         private val binding: ItemMessagesRecipientBinding
-    ) : ViewHolder(binding.root) {
+    ) : ViewHolder( binding.root ){
 
-        fun bind(message: Message){
-            binding.textMessageRecipient.text = message.message
+        fun bind( mensagem: Message ){
+            binding.textMessageRecipient.text = mensagem.message
         }
 
         companion object {
-            fun inflateLayout(parent: ViewGroup): RecipientMessagesViewHolder {
+            fun inflarLayout( parent: ViewGroup ) : MensagensDestinatarioViewHolder {
 
-                val inflater = LayoutInflater.from(parent.context)
+                val inflater = LayoutInflater.from( parent.context )
                 val itemView = ItemMessagesRecipientBinding.inflate(
                     inflater, parent, false
                 )
-                return RecipientMessagesViewHolder(itemView)
+                return MensagensDestinatarioViewHolder( itemView )
 
             }
         }
@@ -63,40 +63,42 @@ class MessagesAdapter : Adapter<ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        val message = messagesList[position]
-        val loggedInUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
-        return if (loggedInUserId == message.userId) {
+        val mensagem = listaMensagens[position]
+        val idUsuarioLogado = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+        return if( idUsuarioLogado == mensagem.userId ){
             Constants.SENDER_TYPE
-        } else {
+        }else{
             Constants.RECIPIENT_TYPE
         }
+
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
-        if (viewType == Constants.SENDER_TYPE)
-            return SenderMessagesViewHolder.inflateLayout(parent)
+        if( viewType == Constants.SENDER_TYPE )
+            return MensagensRemetenteViewHolder.inflarLayout( parent )
 
-        return RecipientMessagesViewHolder.inflateLayout(parent)
+        return MensagensDestinatarioViewHolder.inflarLayout( parent )
 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val message = messagesList[position]
-        when(holder){
-            is SenderMessagesViewHolder -> holder.bind(message)
-            is RecipientMessagesViewHolder -> holder.bind(message)
+        val mensagem = listaMensagens[position]
+        when( holder ){
+            is MensagensRemetenteViewHolder -> holder.bind(mensagem)
+            is MensagensDestinatarioViewHolder -> holder.bind(mensagem)
         }
-        /*val senderMessagesViewHolder = holder as SenderMessagesViewHolderSenderMessagesViewHolder
-        senderMessagesViewHolder.bind()*/
+        /*val mensagensRemetenteViewHolder = holder as MensagensRemetenteViewHolder
+        mensagensRemetenteViewHolder.bind()*/
 
     }
 
     override fun getItemCount(): Int {
-        return messagesList.size
+        return listaMensagens.size
     }
 
 }

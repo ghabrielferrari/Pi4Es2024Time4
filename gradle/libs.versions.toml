@@ -18,6 +18,7 @@ firebaseAuth = "23.0.0"
 activity = "1.9.0"
 firebaseAuthKtx = "23.0.0"
 picasso = "2.8"
+media3CommonKtx = "1.4.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,6 +40,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
+androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

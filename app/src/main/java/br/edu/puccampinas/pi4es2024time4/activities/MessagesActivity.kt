@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
+import br.edu.puccampinas.pi4es2024time4.R
 import br.edu.puccampinas.pi4es2024time4.adapters.MessagesAdapter
 import br.edu.puccampinas.pi4es2024time4.databinding.ActivityMessagesBinding
 import br.edu.puccampinas.pi4es2024time4.model.Conversation
@@ -31,25 +32,25 @@ class MessagesActivity : AppCompatActivity() {
         ActivityMessagesBinding.inflate( layoutInflater )
     }
     private lateinit var listenerRegistration: ListenerRegistration
-    private var dataRecipient: User? = null
-    private var dataUserSender: User? = null
-    private lateinit var adapterConversation: MessagesAdapter
+    private var dadosDestinatario: User? = null
+    private var dadosUsuarioRementente: User? = null
+    private lateinit var conversasAdapter: MessagesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView( binding.root )
-        retrieveUserData()
-        initializeToolbar()
-        initializeClickEvent()
-        initializeRecyclerView()
-        initializeListeners()
+        recuperarDadosUsuarios()
+        inicializarToolbar()
+        inicializarEventoClique()
+        inicializarRecyclerview()
+        inicializarListeners()
     }
 
-    private fun initializeRecyclerView() {
+    private fun inicializarRecyclerview() {
 
         with(binding){
-            adapterConversation = MessagesAdapter()
-            rvMessages.adapter = adapterConversation
+            conversasAdapter = MessagesAdapter()
+            rvMessages.adapter = conversasAdapter
             rvMessages.layoutManager = LinearLayoutManager(applicationContext)
         }
 
@@ -60,38 +61,38 @@ class MessagesActivity : AppCompatActivity() {
         listenerRegistration.remove()
     }
 
-    private fun initializeListeners() {
+    private fun inicializarListeners() {
 
-        val senderUserId = firebaseAuth.currentUser?.uid
-        val recipientUserId = dataRecipient?.id
-        if( senderUserId != null && recipientUserId != null ){
+        val idUsuarioRemetente = firebaseAuth.currentUser?.uid
+        val idUsuarioDestinatario = dadosDestinatario?.id
+        if( idUsuarioRemetente != null && idUsuarioDestinatario != null ){
 
             listenerRegistration = firestore
                 .collection(Constants.MESSAGES)
-                .document( senderUserId )
-                .collection( recipientUserId )
+                .document( idUsuarioRemetente )
+                .collection( idUsuarioDestinatario )
                 .orderBy("data", Query.Direction.ASCENDING)
-                .addSnapshotListener { querySnapshot, error ->
+                .addSnapshotListener { querySnapshot, erro ->
 
-                    if( error != null ){
+                    if( erro != null ){
                         showMessage("Erro ao recuperar mensagens")
                     }
 
-                    val messageList = mutableListOf<Message>()
-                    val documents = querySnapshot?.documents
+                    val listaMensagens = mutableListOf<Message>()
+                    val documentos = querySnapshot?.documents
 
-                    documents?.forEach { documentSnapshot ->
-                        val message = documentSnapshot.toObject( Message::class.java )
-                        if( message != null ){
-                            messageList.add( message )
-                            Log.i("exibicao_mensagens", message.message)
+                    documentos?.forEach { documentSnapshot ->
+                        val mensagem = documentSnapshot.toObject( Message::class.java )
+                        if( mensagem != null ){
+                            listaMensagens.add( mensagem )
+                            Log.i("exibicao_mensagens", mensagem.message)
                         }
                     }
 
                     //Lista
-                    if( messageList.isNotEmpty() ){
+                    if( listaMensagens.isNotEmpty() ){
                         //Carregar os dados Adapter
-                        adapterConversation.addToList( messageList )
+                        conversasAdapter.adicionarLista( listaMensagens )
                     }
 
                 }
@@ -100,48 +101,48 @@ class MessagesActivity : AppCompatActivity() {
 
     }
 
-    private fun initializeClickEvent() {
+    private fun inicializarEventoClique() {
 
         binding.fabSend.setOnClickListener {
-            val message = binding.editMessage.text.toString()
-            saveMessage( message )
+            val mensagem = binding.editMessage.text.toString()
+            salvarMensagem( mensagem )
         }
 
     }
 
-    private fun saveMessage(textMessage: String ) {
-        if( textMessage.isNotEmpty() ){
+    private fun salvarMensagem( textoMensagem: String ) {
+        if( textoMensagem.isNotEmpty() ){
 
-            val senderUserId = firebaseAuth.currentUser?.uid
-            val recipientUserId = dataRecipient?.id
-            if( senderUserId != null && recipientUserId != null ){
-                val message = Message(
-                    senderUserId, textMessage
+            val idUsuarioRemetente = firebaseAuth.currentUser?.uid
+            val idUsuarioDestinatario = dadosDestinatario?.id
+            if( idUsuarioRemetente != null && idUsuarioDestinatario != null ){
+                val mensagem = Message(
+                    idUsuarioRemetente, textoMensagem
                 )
 
                 //Salvar para o Remetente
-                saveMessageFirestore(
-                    senderUserId, recipientUserId, message
+                salvarMensagemFirestore(
+                    idUsuarioRemetente, idUsuarioDestinatario, mensagem
                 )
                 //Jamilton -> Foto e nome Destinatario (ana)
-                val senderConversation = Conversation(
-                    senderUserId, recipientUserId,
-                    dataRecipient!!.picture, dataRecipient!!.name,
-                    textMessage
+                val conversaRemetente = Conversation(
+                    idUsuarioRemetente, idUsuarioDestinatario,
+                    dadosDestinatario!!.picture, dadosDestinatario!!.name,
+                    textoMensagem
                 )
-                saveConversationFirestore( senderConversation )
+                salvarConversaFirestore( conversaRemetente )
 
                 //Salvar mesma mensagem para o destinatario
-                saveMessageFirestore(
-                    recipientUserId, senderUserId, message
+                salvarMensagemFirestore(
+                    idUsuarioDestinatario, idUsuarioRemetente, mensagem
                 )
                 //Ana -> Foto e nome Remente (jamilton)
-                val recipientConversation = Conversation(
-                    recipientUserId, senderUserId,
-                    dataUserSender!!.picture, dataUserSender!!.name,
-                    textMessage
+                val conversaDestinatario = Conversation(
+                    idUsuarioDestinatario, idUsuarioRemetente,
+                    dadosUsuarioRementente!!.picture, dadosUsuarioRementente!!.name,
+                    textoMensagem
                 )
-                saveConversationFirestore( recipientConversation )
+                salvarConversaFirestore( conversaDestinatario )
 
                 binding.editMessage.setText("")
 
@@ -150,7 +151,7 @@ class MessagesActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveConversationFirestore(conversa: Conversation) {
+    private fun salvarConversaFirestore(conversa: Conversation) {
         firestore
             .collection(Constants.CONVERSATIONS)
             .document( conversa.senderUserId )
@@ -163,39 +164,50 @@ class MessagesActivity : AppCompatActivity() {
 
     }
 
-    private fun saveMessageFirestore(
+    private fun salvarMensagemFirestore(
         idUsuarioRemetente: String,
         idUsuarioDestinatario: String,
-        message: Message
+        mensagem: Message
     ) {
 
         firestore
             .collection(Constants.MESSAGES)
             .document( idUsuarioRemetente )
             .collection( idUsuarioDestinatario )
-            .add( message )
+            .add( mensagem )
             .addOnFailureListener {
-                showMessage("Erro ao enviar message")
+                showMessage("Erro ao enviar mensagem")
             }
 
     }
 
-    private fun initializeToolbar() {
+    private fun inicializarToolbar() {
         val toolbar = binding.tbMessages
-        setSupportActionBar( toolbar )
+        setSupportActionBar(toolbar)
         supportActionBar?.apply {
             title = ""
-            if( dataRecipient != null ){
-                binding.textName.text = dataRecipient!!.name
-                Picasso.get()
-                    .load(dataRecipient!!.picture)
-                    .into( binding.imageProfilePicture )
+            if (dadosDestinatario != null) {
+                binding.textName.text = dadosDestinatario!!.name
+
+                // Verificar se a URL da imagem não é nula ou vazia antes de carregar
+                val pictureUrl = dadosDestinatario!!.picture
+                if (!pictureUrl.isNullOrEmpty()) {
+                    Picasso.get()
+                        .load(pictureUrl)
+                        .into(binding.imageProfilePicture)
+                } else {
+                    // Carregar uma imagem padrão caso a URL esteja vazia
+                    Picasso.get()
+                        .load(R.drawable.profile)
+                        .into(binding.imageProfilePicture)
+                }
             }
             setDisplayHomeAsUpEnabled(true)
         }
     }
 
-    private fun retrieveUserData() {
+
+    private fun recuperarDadosUsuarios() {
 
         //Dados do usuário logado
         val idUsuarioRemetente = firebaseAuth.currentUser?.uid
@@ -206,9 +218,9 @@ class MessagesActivity : AppCompatActivity() {
                 .get()
                 .addOnSuccessListener { documentSnapshot ->
 
-                    val user = documentSnapshot.toObject(User::class.java)
-                    if( user != null ){
-                        dataUserSender = user
+                    val usuario = documentSnapshot.toObject(User::class.java)
+                    if( usuario != null ){
+                        dadosUsuarioRementente = usuario
                     }
 
                 }
@@ -217,7 +229,7 @@ class MessagesActivity : AppCompatActivity() {
         //Recuperando dados destinatário
         val extras = intent.extras
         if( extras != null ){
-            dataRecipient = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            dadosDestinatario = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 extras.getParcelable(
                     "dadosDestinatario",
                     User::class.java
