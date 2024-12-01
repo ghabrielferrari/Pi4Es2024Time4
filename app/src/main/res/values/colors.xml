@@ -7,6 +7,8 @@
     <color name="highlight">#F56416</color>
     <color name="gray">#C1C1C1</color>
 
+    <color name="orange">#f77f00</color>
+
     <color name="green_background_message">#dbf9c4</color>
 
 </resources>
