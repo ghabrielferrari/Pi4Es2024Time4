@@ -123,17 +123,17 @@ class MessagesActivity : AppCompatActivity() {
             salvarMensagem( mensagem )
         }
 
-        binding.ibMic.setOnClickListener {
+        /*binding.ibMic.setOnClickListener {
             if (isRecording) {
                 stopRecording()
             } else {
                 startRecording()
             }
-        }
+        }*/
 
-        binding.ibCamera.setOnClickListener {
+        /*binding.ibCamera.setOnClickListener {
             openCamera()
-        }
+        }*/
 
     }
 
@@ -153,7 +153,7 @@ class MessagesActivity : AppCompatActivity() {
                 prepare()
                 start()
                 isRecording = true
-                binding.ibMic.setImageResource(R.drawable.ic_mic_24) // Altere para o ícone de parar
+                //binding.ibMic.setImageResource(R.drawable.ic_mic_24) // Altere para o ícone de parar
             } catch (e: IOException) {
                 showMessage("Erro ao iniciar gravação")
                 Log.e("AudioRecord", "prepare() failed")
@@ -167,7 +167,7 @@ class MessagesActivity : AppCompatActivity() {
                 stop()
                 release()
                 isRecording = false
-                binding.ibMic.setImageResource(R.drawable.ic_mic_24) // Altere para o ícone de microfone
+                //binding.ibMic.setImageResource(R.drawable.ic_mic_24) // Altere para o ícone de microfone
                 enviarMensagemAudio()
             }
         }

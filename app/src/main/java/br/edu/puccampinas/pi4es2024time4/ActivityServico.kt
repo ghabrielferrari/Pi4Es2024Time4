@@ -1,9 +1,12 @@
 package br.edu.puccampinas.pi4es2024time4
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import br.edu.puccampinas.pi4es2024time4.R
+import br.edu.puccampinas.pi4es2024time4.busca.ServiceDetailActivity
 
 class ActivityServico : AppCompatActivity() {
 
@@ -22,5 +25,11 @@ class ActivityServico : AppCompatActivity() {
         serviceNameTextView.text = serviceName
         providerNameTextView.text = providerName
         serviceDescriptionTextView.text = serviceDescription
+
+        // Botão para a busca
+        val buttonAvaliar: Button = findViewById(R.id.buttonAvaliar)
+        buttonAvaliar.setOnClickListener {
+            startActivity(Intent(this, ServiceDetailActivity::class.java))
+        }
     }
 }

@@ -54,6 +54,10 @@
             android:label="Pagamento com Crédito"
             android:exported="true" />
         <activity
+            android:name=".busca.ServiceDetailActivity"
+            android:label="Avaliação de Serviço"
+            android:exported="true" />
+        <activity
             android:name=".busca.MyCustomService"
             android:exported="false" />
         <activity

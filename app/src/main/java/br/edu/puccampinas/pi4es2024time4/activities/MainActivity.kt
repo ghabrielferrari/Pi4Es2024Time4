@@ -19,6 +19,7 @@ import br.edu.puccampinas.projeto.ServiceAdapter
 import br.edu.puccampinas.pi4es2024time4.adapters.ViewPagerAdapter
 import br.edu.puccampinas.pi4es2024time4.databinding.ActivityMainBinding
 import br.edu.puccampinas.pi4es2024time4.ActivityServico
+import br.edu.puccampinas.pi4es2024time4.busca.ServiceDetailActivity
 import br.edu.puccampinas.pi4es2024time4.busca.ServiceListActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
