@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import br.edu.puccampinas.pi4es2024time4.ForunsDuvidaActivity
 import br.edu.puccampinas.pi4es2024time4.R
 import br.edu.puccampinas.projeto.Service
 import br.edu.puccampinas.projeto.ServiceAdapter
@@ -48,10 +49,16 @@ class MainActivity : AppCompatActivity() {
         initializeRecyclerView()
         loadServices()
 
-        // Botão para segunda atividade
+        // Botão para o chatBot
         val buttonNext: Button = findViewById(R.id.buttonNext)
         buttonNext.setOnClickListener {
             startActivity(Intent(this, ChatBotActivity::class.java))
+        }
+
+        // Botão para o Forum
+        val buttonForum: Button = findViewById(R.id.buttonForum)
+        buttonForum.setOnClickListener {
+            startActivity(Intent(this, ForunsDuvidaActivity::class.java))
         }
     }
 
