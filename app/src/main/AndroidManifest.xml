@@ -36,6 +36,10 @@
             android:parentActivityName=".activities.MainActivity"
             android:exported="false" />
         <activity
+            android:name=".ActivityServico"
+            android:parentActivityName=".activities.MainActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ProfileActivity"
             android:exported="false"
             android:parentActivityName=".activities.MainActivity" />

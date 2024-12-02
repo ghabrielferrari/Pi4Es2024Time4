@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import br.edu.puccampinas.pi4es2024time4.ActivityServico
 import br.edu.puccampinas.pi4es2024time4.R
 
 class ServiceAdapter(
