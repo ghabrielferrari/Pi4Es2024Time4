@@ -19,6 +19,7 @@ import br.edu.puccampinas.projeto.ServiceAdapter
 import br.edu.puccampinas.pi4es2024time4.adapters.ViewPagerAdapter
 import br.edu.puccampinas.pi4es2024time4.databinding.ActivityMainBinding
 import br.edu.puccampinas.pi4es2024time4.ActivityServico
+import br.edu.puccampinas.pi4es2024time4.busca.ServiceListActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -60,6 +61,12 @@ class MainActivity : AppCompatActivity() {
         val buttonForum: Button = findViewById(R.id.buttonForum)
         buttonForum.setOnClickListener {
             startActivity(Intent(this, ForunsDuvidaActivity::class.java))
+        }
+
+        // Botão para a busca
+        val buttonSearch: Button = findViewById(R.id.buttonSearch)
+        buttonSearch.setOnClickListener {
+            startActivity(Intent(this, ServiceListActivity::class.java))
         }
     }
 

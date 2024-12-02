@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -26,6 +28,33 @@
         <activity
             android:name=".activities.MessagesActivity"
             android:parentActivityName=".activities.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".busca.ServiceListActivity"
+            android:parentActivityName=".activities.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".busca.FilterSearchActivity"
+            android:label="@string/activity_service_detail"
+            android:exported="true" />
+        <activity
+            android:name=".busca.PaymentMethodActivity"
+            android:label="Métodos de Pagamento"
+            android:exported="true" />
+        <activity
+            android:name=".busca.PixActivity"
+            android:label="Pagamento via Pix"
+            android:exported="true" />
+        <activity
+            android:name=".busca.DebitCardActivity"
+            android:label="Pagamento com Débito"
+            android:exported="true" />
+        <activity
+            android:name=".busca.CreditCardActivity"
+            android:label="Pagamento com Crédito"
+            android:exported="true" />
+        <activity
+            android:name=".busca.MyCustomService"
             android:exported="false" />
         <activity
             android:name=".activities.ChatBotActivity"

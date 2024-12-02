@@ -2,4 +2,12 @@
     <string name="app_name">Pi4Es2024Time4</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="filter_search_activity_label">Pesquisar Filtros</string>
+    <string name="service_list_activity_label">Lista de Serviços</string>
+    <string name="activity_filter_search">Pesquisar Filtros</string>
+    <string name="activity_service_detail">Detalhes do Serviço</string>
+    <string name="activity_payment_method">Detalhe do pagamento</string>
+    <string name="activity_debit_card">Cartão de débito</string>
+    <string name="activity_pix">Pix</string>
+    <string name="activity_credit_card">Cartão de crédito</string>
 </resources>
