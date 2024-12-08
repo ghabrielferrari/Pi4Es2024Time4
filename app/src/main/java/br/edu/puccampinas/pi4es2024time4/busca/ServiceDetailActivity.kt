@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.edu.puccampinas.pi4es2024time4.R
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -21,6 +23,7 @@ class ServiceDetailActivity : AppCompatActivity() {
 
     private val commentsList = mutableListOf<Comment>()  // Lista local para armazenar os comentários
     private lateinit var commentsAdapter: CommentsAdapter
+    private val db = FirebaseFirestore.getInstance()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +79,9 @@ class ServiceDetailActivity : AppCompatActivity() {
                 // Nome fixo "pi4" ao invés de nome do usuário
                 val newComment = Comment("pi4", commentText, rating)
 
+                // Salvar comentário no Firestore
+                saveCommentToFirestore(serviceTitle, newComment)
+
                 // Adicionando o comentário à lista local
                 commentsList.add(newComment)
 
@@ -112,6 +118,20 @@ class ServiceDetailActivity : AppCompatActivity() {
         editor.putString(serviceTitle, json)
         editor.apply()
     }
+
+    // Função para salvar o comentário no Firestore
+    private fun saveCommentToFirestore(serviceTitle: String?, comment: Comment) {
+        if (serviceTitle != null) {
+            val serviceRef = db.collection("services").document(serviceTitle)
+            serviceRef.update(
+                "comments", FieldValue.arrayUnion(comment)
+            ).addOnSuccessListener {
+                Toast.makeText(this, "Comentário salvo no Firestore!", Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao salvar comentário: $e", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }   
 
     // Função para carregar os comentários do SharedPreferences com base no título do serviço
     private fun loadComments(serviceTitle: String) {
