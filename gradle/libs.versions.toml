@@ -1,6 +1,11 @@
 [versions]
 agp = "8.5.1"
+firebaseAdmin = "9.1.0"
 firebaseBom = "33.4.0"
+googleAuthLibraryOauth2Http = "1.11.0"
+jettyServer = "11.0.7"
+jettyServlet = "11.0.7"
+jettyUtil = "11.0.7"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -19,13 +24,19 @@ activity = "1.9.0"
 firebaseAuthKtx = "23.0.0"
 picasso = "2.8"
 media3CommonKtx = "1.4.1"
+firebaseDatabaseKtx = "21.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebaseAdmin" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
 firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx" }
+google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "googleAuthLibraryOauth2Http" }
+jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jettyServer" }
+jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version.ref = "jettyServlet" }
+jetty-util = { module = "org.eclipse.jetty:jetty-util", version.ref = "jettyUtil" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -41,6 +52,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
+firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
