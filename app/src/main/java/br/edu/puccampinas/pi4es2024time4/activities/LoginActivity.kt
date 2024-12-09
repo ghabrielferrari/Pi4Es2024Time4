@@ -112,7 +112,6 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-
     private fun validateFields(): Boolean {
         email = binding.editLoginEmail.text.toString()
         password = binding.editLoginPassword.text.toString()
