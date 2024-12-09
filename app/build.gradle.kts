@@ -42,12 +42,28 @@ android {
 
 dependencies {
 
-    //Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(platform(libs.firebase.auth))
+    // Firebase (já inclui as versões corretas através do BOM)
+    implementation(platform(libs.firebase.bom))  // Firebase BOM, sem necessidade de versão explícita
+    implementation(libs.firebase.auth)  // Firebase Auth (já incluído via BOM)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.database.ktx)
 
+    // Picasso (mantido pois parece ser utilizado)
+    implementation(libs.picasso)
+
+    // Generative AI
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
+    // ZXing
+    implementation("com.google.zxing:core:3.4.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.2.0")
+
+    // Gson
+    implementation("com.google.code.gson:gson:2.8.8")
+
+    // AndroidX Libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -56,10 +72,13 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.firebase.auth)
     implementation(libs.androidx.activity)
-    implementation(libs.firebase.auth.ktx)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
 }

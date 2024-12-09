@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="16dp"
+    android:padding="8dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <!-- Nome do usuário -->
+    <TextView
+        android:id="@+id/usernameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Usuário"
+        android:textSize="16sp"
+        android:layout_marginBottom="4dp"/>
+
+    <!-- Texto do comentário -->
+    <TextView
+        android:id="@+id/commentTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Comentário"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- RatingBar para a avaliação do comentário (não editável) -->
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:isIndicator="true"
+        android:layout_marginBottom="4dp"
+        android:progressTint="@android:color/holo_orange_light"/>
+
+    <!-- Exibição das estrelas do comentário -->
+    <TextView
+        android:id="@+id/starsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="⭐ 5"
+        android:textSize="12sp"
+        android:progressTint="@android:color/holo_orange_light" />
+
+</LinearLayout>
