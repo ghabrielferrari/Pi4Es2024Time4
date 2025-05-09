@@ -1,60 +1,165 @@
 package br.edu.puccampinas.pi4es2024time4.activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import br.edu.puccampinas.pi4es2024time4.ForunsDuvidaActivity
 import br.edu.puccampinas.pi4es2024time4.R
+import br.edu.puccampinas.projeto.Service
+import br.edu.puccampinas.projeto.ServiceAdapter
+import br.edu.puccampinas.pi4es2024time4.adapters.ViewPagerAdapter
 import br.edu.puccampinas.pi4es2024time4.databinding.ActivityMainBinding
+import br.edu.puccampinas.pi4es2024time4.ActivityServico
+import br.edu.puccampinas.pi4es2024time4.busca.ServiceDetailActivity
+import br.edu.puccampinas.pi4es2024time4.busca.ServiceListActivity
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
+    private val binding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    // Firebase
+    private val firebaseAuth by lazy {
+        FirebaseAuth.getInstance()
+    }
+    private lateinit var firestore: FirebaseFirestore
+
+    // RecyclerView
+    private lateinit var serviceList: MutableList<Service>
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var serviceAdapter: ServiceAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.appBarMain.toolbar)
+        initializeToolbar()
+        initializeTabNavigation()
+        initializeRecyclerView()
+        loadServices()
 
-        binding.appBarMain.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+        // Botão para o chatBot
+        val buttonNext: Button = findViewById(R.id.buttonNext)
+        buttonNext.setOnClickListener {
+            startActivity(Intent(this, ChatBotActivity::class.java))
         }
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
-            ), drawerLayout
+
+        // Botão para o Forum
+        val buttonForum: Button = findViewById(R.id.buttonForum)
+        buttonForum.setOnClickListener {
+            startActivity(Intent(this, ForunsDuvidaActivity::class.java))
+        }
+
+        // Botão para a busca
+        val buttonSearch: Button = findViewById(R.id.buttonSearch)
+        buttonSearch.setOnClickListener {
+            startActivity(Intent(this, ServiceListActivity::class.java))
+        }
+    }
+
+    private fun initializeTabNavigation() {
+        val tabLayout = binding.tabLayoutMain
+        val viewPager = binding.viewPagerMain
+
+        val tabs = listOf("CONVERSAS", "CONTATOS")
+        viewPager.adapter = ViewPagerAdapter(tabs, supportFragmentManager, lifecycle)
+
+        tabLayout.isTabIndicatorFullWidth = true
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = tabs[position]
+        }.attach()
+    }
+
+    private fun initializeToolbar() {
+        val toolbar = binding.includeMainToolbar.tbMain
+        setSupportActionBar(toolbar)
+        supportActionBar?.apply {
+            title = "Auxilia"
+        }
+
+        addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.menu_main, menu)
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    when (menuItem.itemId) {
+                        R.id.item_profile -> {
+                            startActivity(
+                                Intent(applicationContext, ProfileActivity::class.java)
+                            )
+                        }
+
+                        R.id.item_logout -> {
+                            logoutUser()
+                        }
+                    }
+                    return true
+                }
+            }
         )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
+    private fun initializeRecyclerView() {
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        serviceList = mutableListOf()
+        serviceAdapter = ServiceAdapter(this, serviceList) { /* Implementar ação de clique */ }
+        recyclerView.adapter = serviceAdapter
+
+        firestore = FirebaseFirestore.getInstance()
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    private fun loadServices() {
+        firestore.collection("serviços")
+            .get()
+            .addOnSuccessListener { snapshot: QuerySnapshot ->
+                serviceList.clear()
+                if (!snapshot.isEmpty) {
+                    for (document in snapshot) {
+                        val service = document.toObject(Service::class.java)
+                        service?.let {
+                            serviceList.add(it)
+                        }
+                    }
+                    serviceAdapter.notifyDataSetChanged()
+                } else {
+                    Log.d("Firestore", "Nenhum dado encontrado")
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirestoreError", "Erro ao buscar dados: ${e.message}")
+            }
+    }
+
+    private fun logoutUser() {
+        AlertDialog.Builder(this)
+            .setTitle("Deslogar")
+            .setMessage("Deseja realmente sair?")
+            .setNegativeButton("Cancelar") { _, _ -> }
+            .setPositiveButton("Sim") { _, _ ->
+                firebaseAuth.signOut()
+                startActivity(
+                    Intent(applicationContext, LoginActivity::class.java)
+                )
+            }
+            .create()
+            .show()
     }
 }
